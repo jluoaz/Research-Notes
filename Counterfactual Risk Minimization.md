@@ -49,8 +49,29 @@ $$f_h(x,y) = 1 + \frac{\delta(x,y)}{M} \min \left\{ M, \frac{h(y|x)}{h_0(y|x)}\r
 
 The goal is to use covering numbers for $$\mathcal{F}_\mathcal{H}$$ .
 
-Lemma: $$ \E_{h_0}[f_h(x,y)] = 1 + \frac{R^M(h)}{M}$$
+____
 
-Definition: The covering number is $$ \mathcal{N}_\infty(\epsilon,\mathcal{F},n) = \sup_{(x_i,y_i) \in (\X \times \Y)^n} \mathcal{N}(\epsilon, \mathcal{F}(\{ (x_i,y_i)\}, \| \cdot\|_\infty)$$where $$ \mathcal{F}(\{ (x_i,y_i)\} )$$ is the function class $$\mathcal{F}$$ conditioned on a sample $$\{ (x_i,y_i)\} $$  $$\mathcal{F}(\{ (x_i,y_i)\} ) = \{ (f(x_1,y_1),\ldots,f(x_n,y_n):f\in \mathcal{F}\}.$$
+Lemma:  $$ \E_{h_0}[f_h(x,y)] = 1 + \frac{R^M(h)}{M}$$
 
-To compactify notation, the 
+___
+
+Definition: The covering number is
+$$
+\mathcal{N}_\infty(\epsilon,\mathcal{F},n) = \sup_{(x_i,y_i) \in (\X \times \Y)^n} \mathcal{N}(\epsilon, \mathcal{F}({ (x_i,y_i)}, \| \cdot\|_\infty)
+$$
+where $$ \mathcal{F}(\{ (x_i,y_i)\} )$$ is the function class $$\mathcal{F}$$ conditioned on a sample $$\{ (x_i,y_i)\} $$  $$\mathcal{F}(\{ (x_i,y_i)\} ) = \{ (f(x_1,y_1),\ldots,f(x_n,y_n):f\in \mathcal{F}\}.$$
+
+___
+
+To compactify notation, let $$u_h^i= \delta_i \min \left\{ M, \frac{h(y_i|x_i)}{p_i}\right\}$$ so that $$\hat{R}^M(h) = \frac{1}{n}\sum u_h^i$$. 
+
+Theorem: With probability at least $$1-\gamma$$ , 
+
+$$\forall h \in \H, R(h) \leq \hat{R}^M(h) + \sqrt{18 \frac{\hat{\mathrm{Var}\mathcal{Q}_\H(n,\gamma)}}{n}} + M\frac{15 \mathcal{Q}_\mathcal{H}(n,\gamma)}{n-1}$$  where $$ \mathcal{Q}_\H (n,\gamma) \equiv \log \left(\frac{10\mathcal{N}_\infty(\frac{1}{n},\mathcal{F}_\H,2n)}{\gamma}\right)$$ for $$0< \gamma < 1$$.
+
+___
+
+This result is analogous to a result by Maurer and Pontil (2009) referred to as an empirical Bernstein's Inequality (empirical because it uses the sample variance).
+
+## Counterfactual risk minimization
+
