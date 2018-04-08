@@ -21,7 +21,9 @@ The data is logged according to a stationary policy $$h_0(x)$$. The data collect
 
 Using importance sampling, one has 
 
-$$R(h) = \E_{h_0}\left[ \delta(x,y) \frac{h(y|x)}{h_0(y|x)}\right]$$ For the observed data, we can define propensity scores $$ p_i \equiv h_0(y_i|x_i)$$ which are known. The MC estimate of $$R(h)$$ is given by 
+$$R(h) = \E_{h_0}\left[ \delta(x,y) \frac{h(y|x)}{h_0(y|x)}\right]$$ 
+
+For the observed data, we can define propensity scores $$ p_i \equiv h_0(y_i|x_i)$$ which are known. The MC estimate of $$R(h)$$ is given by 
 
 $$\hat{R}(h) = \frac{1}{n} \sum_{i=1}^n \delta_i \frac{h(y_i|x_i)}{p_i}$$
 
@@ -67,7 +69,7 @@ To compactify notation, let $$u_h^i= \delta_i \min \left\{ M, \frac{h(y_i|x_i)}{
 
 Theorem: With probability at least $$1-\gamma$$ , 
 
-$$\forall h \in \H, R(h) \leq \hat{R}^M(h) + \sqrt{18 \frac{\hat{\mathrm{Var}\mathcal{Q}_\H(n,\gamma)}}{n}} + M\frac{15 \mathcal{Q}_\mathcal{H}(n,\gamma)}{n-1}$$  where $$ \mathcal{Q}_\H (n,\gamma) \equiv \log \left(\frac{10\mathcal{N}_\infty(\frac{1}{n},\mathcal{F}_\H,2n)}{\gamma}\right)$$ for $$0< \gamma < 1$$.
+$$\forall h \in \H, R(h) \leq \hat{R}^M(h) + \sqrt{18 \frac{\hat{\mathrm{Var}}\mathcal{Q}_\H(n,\gamma)}{n}} + M\frac{15 \mathcal{Q}_\mathcal{H}(n,\gamma)}{n-1}$$  where $$ \mathcal{Q}_\H (n,\gamma) \equiv \log \left(\frac{10\mathcal{N}_\infty(\frac{1}{n},\mathcal{F}_\H,2n)}{\gamma}\right)$$ for $$0< \gamma < 1$$.
 
 ___
 
@@ -75,3 +77,37 @@ This result is analogous to a result by Maurer and Pontil (2009) referred to as 
 
 ## Counterfactual risk minimization
 
+Combining the inverse propensity scoring and the generalization risk motivates the following problem: 
+$$
+\hat{h}^{CRM} = \underset{h\in \H}{\mathrm{argmin}}\left\{ \hat{R}^M(h) + \lambda \sqrt{\frac{\hat{\mathrm{Var}}(u_h)}{n}}\right\}
+$$
+where $M \geq 1$ and $\lambda \geq 0$ are regularization hyperparameters. 
+
+### POEM
+
+Defining weights $w \in \mathbb{R}^d$ and $\phi(x,y)$ a $d$ dimensional joint feature map, we will predict using 
+$$
+h_w^{sup}(x) = \underset{y\in \Y}{\mathrm{argmax}}\{ w \cdot \phi(x,y)\}
+$$
+However, instead of using a hard rule, we instead consider a class of hypotheses $\H_{lin}$ parametrized by $w$. A hypothesis $h_w(x) \in \H_{lin}$ samples $y$ from the distribution
+$$
+h_w(y|x) = \exp(w \cdot \phi(x,y))/\mathbb{Z}(x)
+$$
+where $\mathbb{Z}$ is the partition function. This has a simple gradient, and the following regularized objective can be solved. 
+$$
+w^* = \underset{w\in \mathbb{R}^d}{\mathrm{argmin}}\;\hat{\bar{u}} + \lambda \sqrt{\frac{\mathrm{Var}(u_w)}{n}} 
+$$
+with 
+$$
+u_w^i \equiv \delta_i\min\{ M, \frac{\exp(w \cdot \phi(x_i,y_i))}{p_i\mathbb{Z}(x_i)}\}
+$$
+
+$$
+\hat{\bar{u}}_w \equiv \frac{1}{n} \sum_{i=1}^n u_w^i
+$$
+
+$$
+\hat{\mathrm{Var}}(u_q) \equiv \sum_{i=1}^n (u_w^i -\hat{\bar{u}}_w )^2
+$$
+
+This objective is nonconvex even for $\lambda=0$ but seem to be solved by batch and stochastic gradient descent. 
